@@ -1,0 +1,43 @@
+
+#icon {
+	margin-top:5%;
+}
+
+#icon-img {
+	width:192px;
+	height:192px;
+	border-radius: 50%;
+	box-shadow: 4px 4px 8px 8px #555;
+
+}
+
+form {
+	margin-top:5%;
+	display: inline-block;
+
+}
+
+form.div {
+	background-color:red;
+	
+}
+
+body {
+	background-image: linear-gradient(to right, gray , white);
+	text-align:center;
+}
+
+input{
+	width:75px;
+	font-size:24px;
+	margin-left:5px;
+}
+
+
+td, button {
+	font-size:24px;
+}
+
+table {
+	margin-right: 0px;
+}
