@@ -101,25 +101,40 @@ Number.prototype.countDecimals = function () {
     return this.toString().split(".")[1].length || 0; 
 }
 
+function videoActualRemainingTime(video){
+	return remainingTime = (video.duration-video.currentTime)/(video.playbackRate);
+}
+
 // loops for a couple of frames each second, updating the remaining-time elements
 function superFastLoop() {  
-	if(videoList != null){
+
+	if(videoList != null && videoList.length >= 1){
+		
+		var remainingTime = videoActualRemainingTime(videoList[0]);
+		var minPlaybackRate = videoList[0].playbackRate;
+		for (i = 1; i < videoList.length; i++){
+			remainingTime = Math.min(remainingTime, videoActualRemainingTime(videoList[i]));
+			minPlaybackRate = Math.min(minPlaybackRate, videoList[i].playbackRate);
+		}
+		
+		var timeDisplay;
+		if(isNaN(remainingTime) == false){
+			var hours = Math.floor(remainingTime / 3600);
+			remainingTime -= hours * 3600;
+			var minutes = Math.floor(remainingTime / 60);
+			remainingTime -= minutes * 60;
+			var seconds = Math.floor(remainingTime) % 60;
+			
+			timeDisplay = hours.toString().padStart(2, '0') + ":" 
+				+ minutes.toString().padStart(2, '0')+ ":" 
+				+ seconds.toString().padStart(2, '0')
+				+ " x" + minPlaybackRate.toFixed(playBackRateDecimals); 
+		} else {
+			timeDisplay = "Pending...";
+		}
+		
 		for (i = 0; i < videoList.length; i++){
-			var remainingTime = (videoList[i].duration-videoList[i].currentTime)/(videoList[i].playbackRate);
-			if(isNaN(remainingTime) == false){
-				var hours = Math.floor(remainingTime / 3600);
-				remainingTime -= hours * 3600;
-				var minutes = Math.floor(remainingTime / 60);
-				remainingTime -= minutes * 60;
-				var seconds = Math.floor(remainingTime) % 60;
-				
-				document.getElementById("remaining-time"+i).textContent = hours.toString().padStart(2, '0') + ":" 
-					+ minutes.toString().padStart(2, '0')+ ":" 
-					+ seconds.toString().padStart(2, '0')
-					+ " x" + videoList[i].playbackRate.toFixed(playBackRateDecimals); 
-			} else {
-				document.getElementById("remaining-time"+i).textContent = "Pending...";
-			}
+			document.getElementById("remaining-time"+i).textContent = timeDisplay;
 		}
 	}
 	
