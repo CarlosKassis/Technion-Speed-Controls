@@ -1,10 +1,10 @@
 const user_var = ["step", "speed_1", "speed_2"];
 const user_var_default_val = [0.1, 1, 16]
-const min_legal_video_duration = 10 // some videos are shorter than this value get detected, discard them.
+const min_legal_video_duration = 10 // some videos shorter than this value get detected, discard them.
 
 var videoList; 			// videos holder
-var playbackRate = 1;	// global playback rate
-var playBackRateDecimals = 1 // for displaying playback speed
+var playbackRate = 1;		// global playback rate
+var playBackRateDecimals = 1 	// for displaying playback speed
 
 var step = 0.1;		// amount of speed change
 var speed_1 = 1;	// user set speed 1
