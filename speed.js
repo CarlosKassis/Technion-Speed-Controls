@@ -1,5 +1,6 @@
 const user_var = ["step", "speed_1", "speed_2"];
 const user_var_default_val = [0.1, 1, 16]
+const min_legal_video_duration = 10 // some videos are shorter than this value get detected, discard them.
 
 var videoList; 			// videos holder
 var playbackRate = 1;	// global playback rate
@@ -9,28 +10,37 @@ var step = 0.1;		// amount of speed change
 var speed_1 = 1;	// user set speed 1
 var speed_2 = 16;	// user set speed 2
 
+// easier to develop for Chromium and Firefox
+var storage;
+if(navigator.userAgent.indexOf("Firefox") != -1)
+	storage = browser.storage.local;
+else {
+	storage = chrome.storage.sync;
+}
+
 function onError(error) {
   console.log(`Error: ${error}`);
 }
+
 
 function onGot(item) {
 	if (item.speed_1) {
 		speed_1 = parseFloat(item.speed_1);
 	}
-	
 	if (item.speed_2) {
 		speed_2 = parseFloat(item.speed_2);
 	}
 	if (item.step) {
 		step = parseFloat(item.step);
-	playBackRateDecimals = Math.min(step.countDecimals(),2)
+		playBackRateDecimals = Math.min(step.countDecimals(),2)
 	}
 }
 
+// not the prettiest of js
 function loadUserSettings(){
-	chrome.storage.sync.get('step', onGot);
-	chrome.storage.sync.get('speed_1', onGot);
-	chrome.storage.sync.get('speed_2', onGot);
+	storage.get('step', onGot);
+	storage.get('speed_1', onGot);
+	storage.get('speed_2', onGot);
 }
 loadUserSettings();
 
@@ -39,6 +49,10 @@ setTimeout(function() {
 	videoList = document.getElementsByTagName("video");	
 
 	for (i = 0; i < videoList.length; i++) {
+		
+		if(videoList[i].duration <= min_legal_video_duration)
+			continue;
+		
 		var tag = document.createElement("div");
 		tag.style = 'z-index: 9999999;position:relative;display:inline-block;height:50px;background-color:black;'
 					+	'opacity:0.6;border-radius: 10px;left:43%;top: 10px;';
@@ -102,21 +116,26 @@ Number.prototype.countDecimals = function () {
 }
 
 function videoActualRemainingTime(video){
-	return remainingTime = (video.duration-video.currentTime)/(video.playbackRate);
+	return (video.duration-video.currentTime)/video.playbackRate;
 }
+
 
 // loops for a couple of frames each second, updating the remaining-time elements
 function superFastLoop() {  
 
 	if(videoList != null && videoList.length >= 1){
 		
-		var remainingTime = videoActualRemainingTime(videoList[0]);
-		var minPlaybackRate = videoList[0].playbackRate;
-		for (i = 1; i < videoList.length; i++){
+		// set to maximum reasonable value (what is even reasonable?)
+		var remainingTime = 1000000000
+		var minPlaybackRate = 16;
+		
+		for (i = 0; i < videoList.length; i++){
+			if(videoList[i].duration <= min_legal_video_duration)
+				continue;
+			
 			remainingTime = Math.min(remainingTime, videoActualRemainingTime(videoList[i]));
 			minPlaybackRate = Math.min(minPlaybackRate, videoList[i].playbackRate);
 		}
-		
 		var timeDisplay;
 		if(isNaN(remainingTime) == false){
 			var hours = Math.floor(remainingTime / 3600);
@@ -134,7 +153,9 @@ function superFastLoop() {
 		}
 		
 		for (i = 0; i < videoList.length; i++){
-			document.getElementById("remaining-time"+i).textContent = timeDisplay;
+			if(document.getElementById("remaining-time"+i)){
+				document.getElementById("remaining-time"+i).textContent = timeDisplay;
+			}
 		}
 	}
 	
