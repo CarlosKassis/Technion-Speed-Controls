@@ -44,30 +44,42 @@ function loadUserSettings(){
 }
 loadUserSettings();
 
-// wait for video elements to load
-setTimeout(function() {   
+// wait for video elements to load, assuming videos load all at once
+function detectVideos() {   
 	videoList = document.getElementsByTagName("video");	
-
-	for (i = 0; i < videoList.length; i++) {
-		
-		if(videoList[i].duration <= min_legal_video_duration)
-			continue;
-		
-		var tag = document.createElement("div");
-		tag.style = 'z-index: 9999999;position:relative;display:inline-block;height:50px;background-color:black;'
-					+	'opacity:0.6;border-radius: 10px;left:43%;top: 10px;';
-		
-		var text = document.createElement("p");
-		text.style = 'margin-left:20px;margin-right:20px;margin-top:10px;color:white;font-weight:bold;font-size:26px;line-height: normal;';
-		text.id = "remaining-time" + i;
-		
-		tag.appendChild(text);
-		
-		// Make the DIV element draggable:
-		dragElement(tag);
-		
-		videoList[i].parentElement.prepend(tag);
+	
+	// we try again, we never lose hope
+	if(videoList == null || videoList.length == 0){
+		setTimeout(function() {   
+			detectVideos();		
+		}, 1500);
 	}
+	else 
+	{
+		for (i = 0; i < videoList.length; i++) {
+			
+			if(videoList[i].duration <= min_legal_video_duration)
+				continue;
+			
+			var tag = document.createElement("div");
+			tag.style = 'z-index: 9999999;position:relative;display:inline-block;height:50px;background-color:black;'
+						+	'opacity:0.6;border-radius: 10px;left:43%;top: 10px;';
+			
+			var text = document.createElement("p");
+			text.style = 'margin-left:20px;margin-right:20px;margin-top:10px;color:white;font-weight:bold;font-size:26px;line-height: normal;';
+			text.id = "remaining-time" + i;
+			
+			tag.appendChild(text);
+			
+			// Make the DIV element draggable:
+			dragElement(tag);
+			
+			videoList[i].parentElement.prepend(tag);
+		}
+	}
+}
+setTimeout(function() {   
+	detectVideos();		
 }, 1500);
 
 // listen for keys
