@@ -8,4 +8,5 @@ An add-on that controls video playback speed, and shows the actual time left acc
 #### Controls: '+' Speed up, '-' Slow down, '*' Speed 1, '/' Speed 2
 
 #### Supports (Chrome/Firefox/Edge/Brave):
-https://chrome.google.com/webstore/detail/technion-speed-controls/dfklambbphlgpnbknhffgdbkegkoplpf/related
+- https://chrome.google.com/webstore/detail/technion-speed-controls/dfklambbphlgpnbknhffgdbkegkoplpf/related
+- https://addons.mozilla.org/en-US/firefox/addon/technion-speed-controls/
