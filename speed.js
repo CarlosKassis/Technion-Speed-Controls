@@ -145,7 +145,11 @@ function superFastLoop() {
 			if(videoList[i].duration <= min_legal_video_duration)
 				continue;
 			
-			remainingTime = Math.min(remainingTime, videoActualRemainingTime(videoList[i]));
+			var actualRemainingTime = videoActualRemainingTime(videoList[i])
+			if(isNaN(actualRemainingTime))
+				continue;
+			
+			remainingTime = Math.min(remainingTime, actualRemainingTime);
 			minPlaybackRate = Math.min(minPlaybackRate, videoList[i].playbackRate);
 		}
 		var timeDisplay;
