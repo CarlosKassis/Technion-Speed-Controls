@@ -140,6 +140,7 @@ function superFastLoop() {
 		// set to maximum reasonable value (what is even reasonable?)
 		var remainingTime = 1000000000
 		var minPlaybackRate = 16;
+		var isTimeAvailable = false;
 		
 		for (i = 0; i < videoList.length; i++){
 			if(videoList[i].duration <= min_legal_video_duration)
@@ -149,11 +150,13 @@ function superFastLoop() {
 			if(isNaN(actualRemainingTime))
 				continue;
 			
+			isTimeAvailable = true;
 			remainingTime = Math.min(remainingTime, actualRemainingTime);
 			minPlaybackRate = Math.min(minPlaybackRate, videoList[i].playbackRate);
 		}
+		
 		var timeDisplay;
-		if(isNaN(remainingTime) == false){
+		if(isTimeAvailable == true){
 			var hours = Math.floor(remainingTime / 3600);
 			remainingTime -= hours * 3600;
 			var minutes = Math.floor(remainingTime / 60);
